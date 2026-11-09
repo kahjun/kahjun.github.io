@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Design tokens. Change colours here and the whole site follows.
+   Light values are the defaults; the dark block below overrides them. */
+:root {
+  --bg: #fafaf9;
+  --fg: #1c1917;
+  --muted: #57534e;
+  --line: #e7e5e4;
+  --accent: #4f46e5; /* indigo */
+  --path: 79, 70, 229; /* r, g, b used by the hero canvas */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c0a09;
+    --fg: #fafaf9;
+    --muted: #a8a29e;
+    --line: #292524;
+    --accent: #a5b4fc;
+    --path: 165, 180, 252;
+  }
+}
+
+/* Expose the tokens to Tailwind, so you can write text-muted, border-line, bg-accent, etc.
+   "inline" makes Tailwind reference the variables, so dark mode switches automatically. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-work: var(--accent);
+  --color-study: #f59e0b; /* amber */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Smooth in-page jumps, unless the visitor prefers reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+}

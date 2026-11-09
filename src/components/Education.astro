@@ -1,0 +1,24 @@
+---
+import { degrees, qualifications } from '../data/education';
+import { educationSection } from '../data/site';
+import EntryList from './EntryList.astro';
+---
+
+<section id="education" class="scroll-mt-12 mx-auto max-w-3xl border-t border-line px-6 py-16">
+  <h2 class="text-3xl font-bold tracking-tight">{educationSection.heading}</h2>
+  <p class="mt-2 text-muted">{educationSection.intro}</p>
+
+  <h3 class="mt-10 text-sm font-medium uppercase tracking-wide text-accent">
+    {educationSection.degreesTitle}
+  </h3>
+  <div class="mt-5">
+    <EntryList items={degrees} tone="study" />
+  </div>
+
+  <h3 class="mt-12 text-sm font-medium uppercase tracking-wide text-accent">
+    {educationSection.qualificationsTitle}
+  </h3>
+  <div class="mt-5">
+    <EntryList items={qualifications} tone="study" />
+  </div>
+</section>

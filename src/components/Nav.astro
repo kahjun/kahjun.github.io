@@ -1,0 +1,22 @@
+---
+import { nav, profile } from '../data/site';
+---
+
+<!-- Sits just under the hero, then sticks to the top while scrolling. -->
+<nav
+  aria-label="Sections"
+  class="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur"
+>
+  <div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-3 text-sm">
+    <a href="#top" class="font-semibold">{profile.name}</a>
+    <ul class="flex gap-5">
+      {
+        nav.links.map((l) => (
+          <li>
+            <a href={l.href} class="text-muted hover:text-fg">{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</nav>

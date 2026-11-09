@@ -1,0 +1,21 @@
+---
+import { contact } from '../data/site';
+---
+
+<footer id="contact" class="scroll-mt-12 mx-auto max-w-3xl px-6 py-16">
+  <h2 class="text-3xl font-bold tracking-tight">{contact.heading}</h2>
+  <p class="mt-3 text-lg">{contact.text}</p>
+  <p class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+    <a class="font-medium text-accent hover:underline" href={`mailto:${contact.email}`}>
+      {contact.email}
+    </a>
+    {
+      contact.links.map((l) => (
+        <a class="font-medium text-accent hover:underline" href={l.href}>
+          {l.label}
+        </a>
+      ))
+    }
+  </p>
+  <p class="mt-12 text-sm text-muted">{contact.footer}</p>
+</footer>

@@ -1,0 +1,13 @@
+---
+import { work } from '../data/work';
+import { workSection } from '../data/site';
+import EntryList from './EntryList.astro';
+---
+
+<section id="work" class="scroll-mt-12 mx-auto max-w-3xl px-6 py-16">
+  <h2 class="text-3xl font-bold tracking-tight">{workSection.heading}</h2>
+  <p class="mt-2 text-muted">{workSection.intro}</p>
+  <div class="mt-10">
+    <EntryList items={work} tone="work" />
+  </div>
+</section>

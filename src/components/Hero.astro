@@ -1,0 +1,114 @@
+---
+// Hero: name, one-line pitch, and a Monte Carlo background.
+// Wording comes from src/data/site.ts. The <canvas> is drawn by the <script> below.
+import { profile } from '../data/site';
+---
+
+<header id="top" class="relative overflow-hidden border-b border-line">
+  <canvas
+    id="hero-canvas"
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-0 h-full w-full"
+  ></canvas>
+
+  <div
+    class="relative mx-auto flex max-w-3xl flex-col-reverse items-start gap-10 px-6 py-20 sm:flex-row sm:items-center sm:justify-between sm:py-28"
+  >
+    <div>
+      <p class="text-sm font-medium tracking-wide text-accent">{profile.credentials}</p>
+      <h1 class="mt-3 text-5xl font-bold tracking-tight sm:text-6xl">{profile.name}</h1>
+      <p class="mt-6 max-w-xl text-xl sm:text-2xl">{profile.tagline}</p>
+      <p class="mt-4 max-w-xl text-muted">{profile.blurb}</p>
+      <div class="mt-8 flex flex-wrap gap-3 text-sm">
+        <a
+          href={profile.buttons.primary.href}
+          class="rounded-full bg-accent px-5 py-2 font-medium text-bg hover:opacity-90"
+        >
+          {profile.buttons.primary.label}
+        </a>
+        <a
+          href={profile.buttons.secondary.href}
+          class="rounded-full border border-line px-5 py-2 font-medium hover:opacity-80"
+        >
+          {profile.buttons.secondary.label}
+        </a>
+      </div>
+    </div>
+    <img
+      src={profile.avatar.src}
+      alt={profile.avatar.alt}
+      width="176"
+      height="176"
+      class="h-32 w-32 shrink-0 rounded-full border border-line sm:h-44 sm:w-44"
+    />
+  </div>
+</header>
+
+<script>
+  // Monte Carlo background: many random "possible futures" fanning out from one point.
+  const canvas = document.getElementById('hero-canvas') as HTMLCanvasElement | null;
+  const ctx = canvas?.getContext('2d');
+
+  if (canvas && ctx) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Tweak the look here.
+    const PATHS = 70; // how many random futures
+    const STEPS = 140; // how long each one runs
+    const DRIFT = 0.04; // average upward trend per step
+    const VOLATILITY = 0.25; // how wildly each step swings
+
+    // Standard normal random number (Box-Muller transform).
+    const randn = () =>
+      Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random());
+
+    // Each path is a random walk with a small upward drift.
+    const paths: number[][] = Array.from({ length: PATHS }, () => {
+      const p = [0];
+      for (let i = 1; i < STEPS; i++) p.push(p[i - 1] + DRIFT + randn() * VOLATILITY);
+      return p;
+    });
+    const all = paths.flat();
+    const lo = Math.min(...all);
+    const hi = Math.max(...all);
+
+    let width = 0;
+    let height = 0;
+    let drawnUpTo = reduceMotion ? STEPS : 0;
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      width = canvas.clientWidth;
+      height = canvas.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
+    };
+
+    const draw = () => {
+      const rgb = getComputedStyle(canvas).getPropertyValue('--path').trim();
+      ctx.clearRect(0, 0, width, height);
+      const x = (i: number) => (i / (STEPS - 1)) * width;
+      const y = (v: number) => height - ((v - lo) / (hi - lo)) * height * 0.8 - height * 0.1;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = `rgba(${rgb}, 0.12)`;
+      for (const p of paths) {
+        ctx.beginPath();
+        for (let i = 0; i <= drawnUpTo && i < STEPS; i++) {
+          i === 0 ? ctx.moveTo(x(i), y(p[i])) : ctx.lineTo(x(i), y(p[i]));
+        }
+        ctx.stroke();
+      }
+    };
+
+    const tick = () => {
+      drawnUpTo += 2;
+      draw();
+      if (drawnUpTo < STEPS) requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    if (!reduceMotion) requestAnimationFrame(tick);
+  }
+</script>
